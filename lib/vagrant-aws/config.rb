@@ -211,6 +211,11 @@ module VagrantPlugins
       # @return [Time]
       attr_accessor :spot_valid_until
 
+      # Post terminate callback
+      #
+      # @return [Proc]
+      attr_accessor :post_terminate_callback
+
       # The product description for the spot price history
       #
       # @return [String]
@@ -256,6 +261,7 @@ module VagrantPlugins
         @spot_instance             = UNSET_VALUE
         @spot_max_price            = UNSET_VALUE
         @spot_valid_until          = UNSET_VALUE
+        @post_terminate_callback   = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -440,6 +446,9 @@ module VagrantPlugins
 
         # Default: Request is effective indefinitely.
         @spot_valid_until = nil if @spot_valid_until == UNSET_VALUE
+
+        # default to nil
+        @post_terminate_callback = nil if @post_terminate_callback == UNSET_VALUE
 
         # default to nil
         @spot_price_product_description = nil if @spot_price_product_description == UNSET_VALUE

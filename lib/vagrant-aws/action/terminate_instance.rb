@@ -13,7 +13,7 @@ module VagrantPlugins
 
         def call(env)
           server         = env[:aws_compute].servers.get(env[:machine].id)
-          region         = env[:machine].provider_config.region
+          region         = env[:machine].provider.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
           elastic_ip     = region_config.elastic_ip
@@ -29,6 +29,11 @@ module VagrantPlugins
           env[:ui].info(I18n.t("vagrant_aws.terminating"))
           server.destroy
           env[:machine].id = nil
+
+          # Run a "post-terminate" callback for cleanup if provided
+          if env[:machine].provider_config.post_terminate_callback
+            env[:machine].provider_config.post_terminate_callback.call(env)
+          end
 
           @app.call(env)
         end
