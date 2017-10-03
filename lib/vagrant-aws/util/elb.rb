@@ -34,7 +34,7 @@ module VagrantPlugins
         instances = env[:aws_compute].servers.all("instance-id" => elb.instances)
         
         azs = if instances.empty?
-                ["#{env[:machine].provider_config.region}a"]
+                ["#{env[:machine].provider.region}a"]
               else
                 instances.map(&:availability_zone).uniq
               end
