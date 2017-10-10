@@ -52,7 +52,7 @@ module VagrantPlugins
             env[:metrics]["instance_ready_time"] = Util::Timer.time do
               
               # Get the config, to set the ami burn timeout
-              region = env[:machine].provider_config.region
+              region = env[:machine].provider.region
               region_config = env[:machine].provider_config.get_region_config(region)
               tries = region_config.instance_package_timeout / 2
 
@@ -128,7 +128,7 @@ module VagrantPlugins
         def create_vagrantfile env
           File.open(File.join(env["export.temp_dir"], "Vagrantfile"), "w") do |f|
             f.write(TemplateRenderer.render("vagrant-aws_package_Vagrantfile", {
-              region: env[:machine].provider_config.region,
+              region: env[:machine].provider.region,
               ami: @ami_id,
               template_root: template_root
             }))

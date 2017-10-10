@@ -13,7 +13,7 @@ module VagrantPlugins
 
         def call(env)
           server         = env[:aws_compute].servers.get(env[:machine].id)
-          region         = env[:machine].provider_config.region
+          region         = env[:machine].provider.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
           elastic_ip     = region_config.elastic_ip
