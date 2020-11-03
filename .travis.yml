@@ -5,8 +5,9 @@ sudo: false
 cache: bundler
 
 rvm:
-  - 2.2.7
-  - 2.3.4
+  - 2.5
+  - 2.6
+  - 2.7
 
 deploy:
   provider: rubygems
@@ -16,4 +17,4 @@ deploy:
   on:
     repo: mkubenka/vagrant-aws
     branch: mkubenka
-    rvm: 2.3.4
+    rvm: 2.7
