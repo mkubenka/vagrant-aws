@@ -161,10 +161,9 @@ This provider exposes quite a few provider-specific configuration options:
 * `block_device_mapping` - Amazon EC2 Block Device Mapping Property
 * `elb` - The ELB name to attach to the instance.
 * `unregister_elb_from_az` - Removes the ELB from the AZ on removal of the last instance if true (default). In non default VPC this has to be false.
-* `terminate_on_shutdown` - Indicates whether an instance stops or terminates
-  when you initiate shutdown from the instance.
+* `terminate_on_shutdown` - Indicates whether an instance stops or terminates when you initiate shutdown from the instance.
+* `post_terminate_callback` - Optional callback to do post-terminate cleanup work if needed. See the [example](#post-terminate-callback) below.
 * `endpoint` - The endpoint URL for connecting to AWS (or an AWS-like service). Only required for non AWS clouds, such as [eucalyptus](https://github.com/eucalyptus/eucalyptus/wiki).
-
 * `spot_instance` - Boolean value; indicates whether the config is for a spot instance, or on-demand. For more information about spot instances, see the [AWS Documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-instances-work.html)
 * `spot_max_price` - Decimal value; state the maximum bid for your spot instance. If nil, it will compute average price in `region` for selected `instance_type`.
 * `spot_price_product_description` - The product description for the spot price history used to compute average price. Defaults to 'Linux/UNIX'. 
@@ -297,6 +296,31 @@ Vagrant.configure("2") do |config|
   end
 end
 ```
+
+### Post-terminate Callback
+
+Using this property you can define a closure callback that will run after the
+machine is terminated.
+
+```ruby
+Vagrant.configure("2") do |config|
+  # ... other stuff
+
+  config.vm.provider "aws" do |aws|
+    dns_name = "machine-1.fqdn.domain.com."
+    dns_zone = "fqdn.domain.com."
+
+    aws.post_terminate_callback = lambda do |env|
+      fog_dns = Fog::DNS.new({ ... })
+      zone = fog_dns.zones.find { |z| z.domain == dns_zone }
+      record = zone.records.find { |r| r.name == dns_name }
+      record.destroy
+    end
+  end
+end
+```
+
+Note that [Fog](http://fog.io/) libraries are already brought-in with vagrant-aws.
 
 ## Development
 

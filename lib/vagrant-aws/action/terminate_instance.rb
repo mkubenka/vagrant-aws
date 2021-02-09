@@ -30,6 +30,11 @@ module VagrantPlugins
           server.destroy
           env[:machine].id = nil
 
+          # Run a "post-terminate" callback for cleanup if provided
+          if env[:machine].provider_config.post_terminate_callback
+            env[:machine].provider_config.post_terminate_callback.call(env)
+          end
+
           @app.call(env)
         end
 
